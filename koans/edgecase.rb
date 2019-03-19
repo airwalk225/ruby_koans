@@ -50,8 +50,12 @@ module EdgeCase
       if failed?
         puts
         puts "You have not yet reached enlightenment ..."
-        puts failure.message
-        puts
+
+        unless EdgeCase::Koan::inDarkness?
+          puts failure.message
+          puts
+        end
+
         puts "Please meditate on the following code:"
         if assert_failed?
           puts find_interesting_lines(failure.backtrace)
@@ -97,11 +101,12 @@ module EdgeCase
   class Koan
     include Test::Unit::Assertions
 
-    attr_reader :name, :failure
+    attr_reader :name, :failure, :darkness
 
     def initialize(name)
       @name = name
       @failure = nil
+      @darkness = false
     end
 
     def passed?
@@ -153,6 +158,10 @@ module EdgeCase
         accumulator.accumulate(test)
       end
 
+      def inDarkness?
+        @darkness
+      end
+
       def end_of_enlightenment
         @tests_disabled = true
       end
@@ -164,6 +173,8 @@ module EdgeCase
             @test_pattern = Regexp.new($1)
           when /^-n(.*)$/
             @test_pattern = Regexp.new(Regexp.quote($1))
+          when "darkness"
+            @darkness = true
           else
             if File.exist?(arg)
               load(arg)

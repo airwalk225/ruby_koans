@@ -1,7 +1,12 @@
 require 'rubygems'
-require 'rake/rdoctask'
+require 'rdoc/task'
 
 task :default => :walk_the_path
+
+task :in_darkness do
+  cd 'koans'
+  ruby 'path_to_enlightenment.rb darkness'
+end
 
 task :walk_the_path do
   cd 'koans'
